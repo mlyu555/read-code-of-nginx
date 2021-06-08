@@ -12,11 +12,11 @@
 #include <ngx_config.h>
 #include <ngx_core.h>
 
-
+// 数据结构 ngx_str_t
 typedef struct {
-    size_t      len;
-    u_char     *data;
-} ngx_str_t;
+    size_t      len;    // 用len来表示字符串长度, 而不是'\0'
+    u_char     *data;   // 指向第一个字符
+} ngx_str_t;    
 
 
 typedef struct {
@@ -34,31 +34,32 @@ typedef struct {
     unsigned    escape:1;
 
     u_char     *data;
-} ngx_variable_value_t;
+} ngx_variable_value_t; 
 
-
-#define ngx_string(str)     { sizeof(str) - 1, (u_char *) str }
-#define ngx_null_string     { 0, NULL }
+// api基本都是宏包裹的glibc的api
+// 使用时有很多小问题
+#define ngx_string(str)     { sizeof(str) - 1, (u_char *) str }     // API str必须是常量字符串(sizeof), 只能赋值时初始化
+#define ngx_null_string     { 0, NULL }                             // API 空字符串, 只能赋值时初始化
 #define ngx_str_set(str, text)                                               \
-    (str)->len = sizeof(text) - 1; (str)->data = (u_char *) text
-#define ngx_str_null(str)   (str)->len = 0; (str)->data = NULL
+    (str)->len = sizeof(text) - 1; (str)->data = (u_char *) text    // API text必须是常量字符串(sizeof)
+#define ngx_str_null(str)   (str)->len = 0; (str)->data = NULL      // API 设置为空字符串
 
 
 #define ngx_tolower(c)      (u_char) ((c >= 'A' && c <= 'Z') ? (c | 0x20) : c)
 #define ngx_toupper(c)      (u_char) ((c >= 'a' && c <= 'z') ? (c & ~0x20) : c)
 
-void ngx_strlow(u_char *dst, u_char *src, size_t n);
+void ngx_strlow(u_char *dst, u_char *src, size_t n);    // API 大写转小写
 
 
-#define ngx_strncmp(s1, s2, n)  strncmp((const char *) s1, (const char *) s2, n)
+#define ngx_strncmp(s1, s2, n)  strncmp((const char *) s1, (const char *) s2, n) // API 比较前n个字符
 
 
 /* msvc and icc7 compile strcmp() to inline loop */
-#define ngx_strcmp(s1, s2)  strcmp((const char *) s1, (const char *) s2)
+#define ngx_strcmp(s1, s2)  strcmp((const char *) s1, (const char *) s2)    // API
 
 
-#define ngx_strstr(s1, s2)  strstr((const char *) s1, (const char *) s2)
-#define ngx_strlen(s)       strlen((const char *) s)
+#define ngx_strstr(s1, s2)  strstr((const char *) s1, (const char *) s2)    // API
+#define ngx_strlen(s)       strlen((const char *) s)                        // API
 
 size_t ngx_strnlen(u_char *p, size_t n);
 
@@ -158,8 +159,8 @@ u_char *ngx_vslprintf(u_char *buf, u_char *last, const char *fmt, va_list args);
 #define ngx_vsnprintf(buf, max, fmt, args)                                   \
     ngx_vslprintf(buf, buf + (max), fmt, args)
 
-ngx_int_t ngx_strcasecmp(u_char *s1, u_char *s2);
-ngx_int_t ngx_strncasecmp(u_char *s1, u_char *s2, size_t n);
+ngx_int_t ngx_strcasecmp(u_char *s1, u_char *s2);               // API
+ngx_int_t ngx_strncasecmp(u_char *s1, u_char *s2, size_t n);    // API
 
 u_char *ngx_strnstr(u_char *s1, char *s2, size_t n);
 
@@ -183,6 +184,7 @@ ngx_int_t ngx_hextoi(u_char *line, size_t n);
 u_char *ngx_hex_dump(u_char *dst, u_char *src, size_t len);
 
 
+// API Base64编码
 #define ngx_base64_encoded_length(len)  (((len + 2) / 3) * 4)
 #define ngx_base64_decoded_length(len)  (((len + 3) / 4) * 3)
 
@@ -191,11 +193,14 @@ void ngx_encode_base64url(ngx_str_t *dst, ngx_str_t *src);
 ngx_int_t ngx_decode_base64(ngx_str_t *dst, ngx_str_t *src);
 ngx_int_t ngx_decode_base64url(ngx_str_t *dst, ngx_str_t *src);
 
+
+// API UTF8编码
 uint32_t ngx_utf8_decode(u_char **p, size_t n);
 size_t ngx_utf8_length(u_char *p, size_t n);
 u_char *ngx_utf8_cpystrn(u_char *dst, u_char *src, size_t n, size_t len);
 
 
+// API 转义字符编码
 #define NGX_ESCAPE_URI            0
 #define NGX_ESCAPE_ARGS           1
 #define NGX_ESCAPE_URI_COMPONENT  2

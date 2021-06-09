@@ -14,22 +14,22 @@
 
 
 typedef struct {
-    void             *value;
+    void             *value;        // 指向hash元素数据
     u_short           len;
     u_char            name[1];
 } ngx_hash_elt_t;
 
 
 typedef struct {
-    ngx_hash_elt_t  **buckets;
-    ngx_uint_t        size;
+    ngx_hash_elt_t  **buckets;      // 桶元素
+    ngx_uint_t        size;         // 元素个数
 } ngx_hash_t;
 
 
 typedef struct {
     ngx_hash_t        hash;
     void             *value;
-} ngx_hash_wildcard_t;
+} ngx_hash_wildcard_t;      // 处理带有通配符的域名的匹配问题
 
 
 typedef struct {
@@ -46,7 +46,7 @@ typedef struct {
     ngx_hash_t            hash;
     ngx_hash_wildcard_t  *wc_head;
     ngx_hash_wildcard_t  *wc_tail;
-} ngx_hash_combined_t;
+} ngx_hash_combined_t;      // 组合类型hash表
 
 
 typedef struct {
@@ -59,7 +59,7 @@ typedef struct {
     char             *name;
     ngx_pool_t       *pool;
     ngx_pool_t       *temp_pool;
-} ngx_hash_init_t;
+} ngx_hash_init_t;          // 初始化hash的基本信息
 
 
 #define NGX_HASH_SMALL            1
@@ -103,6 +103,7 @@ void *ngx_hash_find_wc_tail(ngx_hash_wildcard_t *hwc, u_char *name, size_t len);
 void *ngx_hash_find_combined(ngx_hash_combined_t *hash, ngx_uint_t key,
     u_char *name, size_t len);
 
+// API 初始化
 ngx_int_t ngx_hash_init(ngx_hash_init_t *hinit, ngx_hash_key_t *names,
     ngx_uint_t nelts);
 ngx_int_t ngx_hash_wildcard_init(ngx_hash_init_t *hinit, ngx_hash_key_t *names,

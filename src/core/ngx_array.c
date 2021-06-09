@@ -73,6 +73,7 @@ ngx_array_push(ngx_array_t *a)
         } else {
             /* allocate a new array */
 
+            // 动态扩容
             new = ngx_palloc(p, 2 * size);
             if (new == NULL) {
                 return NULL;

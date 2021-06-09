@@ -17,6 +17,7 @@ typedef void *            ngx_buf_tag_t;
 
 typedef struct ngx_buf_s  ngx_buf_t;
 
+// 数据结构 抽象数据ngx_buf_t（某缓冲区、某文件、某纯元数据）
 struct ngx_buf_s {
     u_char          *pos;
     u_char          *last;
@@ -55,10 +56,11 @@ struct ngx_buf_s {
     /* STUB */ int   num;
 };
 
-
+// 数据结构 单链表ngx_chain_t
+// filter模块处理其他filter或handler模块传递的数据
 struct ngx_chain_s {
-    ngx_buf_t    *buf;
-    ngx_chain_t  *next;
+    ngx_buf_t    *buf;          // 实际数据
+    ngx_chain_t  *next;         // next指针
 };
 
 
@@ -147,6 +149,7 @@ ngx_chain_t *ngx_create_chain_of_bufs(ngx_pool_t *pool, ngx_bufs_t *bufs);
 #define ngx_alloc_buf(pool)  ngx_palloc(pool, sizeof(ngx_buf_t))
 #define ngx_calloc_buf(pool) ngx_pcalloc(pool, sizeof(ngx_buf_t))
 
+// API 创建
 ngx_chain_t *ngx_alloc_chain_link(ngx_pool_t *pool);
 #define ngx_free_chain(pool, cl)                                             \
     (cl)->next = (pool)->chain;                                              \

@@ -14,7 +14,7 @@ static ngx_inline void *ngx_palloc_small(ngx_pool_t *pool, size_t size,
 static void *ngx_palloc_block(ngx_pool_t *pool, size_t size);
 static void *ngx_palloc_large(ngx_pool_t *pool, size_t size);
 
-
+// size >= sizeof(ngx_pool_t) && size <= NGX_MAX_ALLOC_FROM_POOL
 ngx_pool_t *
 ngx_create_pool(size_t size, ngx_log_t *log)
 {
@@ -30,6 +30,7 @@ ngx_create_pool(size_t size, ngx_log_t *log)
     p->d.next = NULL;
     p->d.failed = 0;
 
+    // size = min(NGX_MAX_ALLOC_FROM_POOL, size - sizeof(ngx_pool_t))
     size = size - sizeof(ngx_pool_t);
     p->max = (size < NGX_MAX_ALLOC_FROM_POOL) ? size : NGX_MAX_ALLOC_FROM_POOL;
 
@@ -156,6 +157,7 @@ ngx_palloc_small(ngx_pool_t *pool, size_t size, ngx_uint_t align)
     do {
         m = p->d.last;
 
+        // 是否对齐: 提高处理速度但浪费少量内存
         if (align) {
             m = ngx_align_ptr(m, NGX_ALIGNMENT);
         }

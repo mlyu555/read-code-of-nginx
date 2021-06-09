@@ -53,7 +53,8 @@ typedef struct {
     ngx_uint_t            failed;
 } ngx_pool_data_t;
 
-
+// typedef struct ngx_pool_s        ngx_pool_t;
+// 数据结构 ngx_pool_t
 struct ngx_pool_s {
     ngx_pool_data_t       d;
     size_t                max;
@@ -71,12 +72,12 @@ typedef struct {
     ngx_log_t            *log;
 } ngx_pool_cleanup_file_t;
 
-
-ngx_pool_t *ngx_create_pool(size_t size, ngx_log_t *log);
+// 创建池结构
+ngx_pool_t *ngx_create_pool(size_t size, ngx_log_t *log);   // API
 void ngx_destroy_pool(ngx_pool_t *pool);
 void ngx_reset_pool(ngx_pool_t *pool);
 
-void *ngx_palloc(ngx_pool_t *pool, size_t size);
+void *ngx_palloc(ngx_pool_t *pool, size_t size);    // API 分配内存
 void *ngx_pnalloc(ngx_pool_t *pool, size_t size);
 void *ngx_pcalloc(ngx_pool_t *pool, size_t size);
 void *ngx_pmemalign(ngx_pool_t *pool, size_t size, size_t alignment);

@@ -1,0 +1,29 @@
+{
+    // 调试配置
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(lldb) 附加",
+            "type": "cppdbg",
+            "request": "attach",
+            "program": "${workspaceFolder}/nginx/sbin/nginx",
+            "processId": "23277",
+            "MIMode": "lldb"
+        },
+        {
+            "name": "(lldb) 启动",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/nginx/sbin/nginx",  // mod 输入程序名称，例如 ${workspaceFolder}/a.out
+            "args": [],
+            "stopAtEntry": true,   // mod
+            "cwd": "${workspaceFolder}",  // mod ${fileDirname}
+            "environment": [],
+            "externalConsole": true,   // mod
+            "MIMode": "lldb"
+        }
+    ]
+}

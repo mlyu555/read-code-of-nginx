@@ -192,6 +192,7 @@ static char        *ngx_signal;
 static char **ngx_os_environ;
 
 
+// main Nginx入口
 int ngx_cdecl
 main(int argc, char *const *argv)
 {

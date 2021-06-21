@@ -51,6 +51,7 @@
 
 #if !(NGX_WIN32)
 
+// 疑问 为什么要特意分成2行而不是直接使用1行？
 #define ngx_signal_helper(n)     SIG##n
 #define ngx_signal_value(n)      ngx_signal_helper(n)
 
@@ -70,11 +71,13 @@
 #define NGX_CHANGEBIN_SIGNAL     USR2
 #endif
 
-#define ngx_cdecl
+// 均在函数可变参数中使用，如main、fmt、printf、string等
+#define ngx_cdecl       
 #define ngx_libc_cdecl
 
 #endif
 
+// intptr_t 跨平台，其长度总为所在平台的位数——存放地址
 typedef intptr_t        ngx_int_t;
 typedef uintptr_t       ngx_uint_t;
 typedef intptr_t        ngx_flag_t;

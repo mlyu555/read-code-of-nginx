@@ -11,6 +11,7 @@
 #include <ngx_channel.h>
 
 
+// 信号自定义结构
 typedef struct {
     int     signo;
     char   *signame;
@@ -315,6 +316,7 @@ ngx_init_signals(ngx_log_t *log)
 }
 
 
+// 信号处理函数
 static void
 ngx_signal_handler(int signo, siginfo_t *siginfo, void *ucontext)
 {

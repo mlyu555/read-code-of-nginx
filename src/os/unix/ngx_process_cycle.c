@@ -28,11 +28,13 @@ static void ngx_cache_manager_process_handler(ngx_event_t *ev);
 static void ngx_cache_loader_process_handler(ngx_event_t *ev);
 
 
+// 全局变量
 ngx_uint_t    ngx_process;
 ngx_uint_t    ngx_worker;
 ngx_pid_t     ngx_pid;
 ngx_pid_t     ngx_parent;
 
+// 原子访问 sig_atomic_t
 sig_atomic_t  ngx_reap;
 sig_atomic_t  ngx_sigio;
 sig_atomic_t  ngx_sigalrm;
@@ -70,6 +72,7 @@ static ngx_log_t        ngx_exit_log;
 static ngx_open_file_t  ngx_exit_log_file;
 
 
+// 主进程 master process start
 void
 ngx_master_process_cycle(ngx_cycle_t *cycle)
 {
@@ -84,6 +87,7 @@ ngx_master_process_cycle(ngx_cycle_t *cycle)
     ngx_msec_t         delay;
     ngx_core_conf_t   *ccf;
 
+// 信号处理
     sigemptyset(&set);
     sigaddset(&set, SIGCHLD);
     sigaddset(&set, SIGALRM);
@@ -104,6 +108,7 @@ ngx_master_process_cycle(ngx_cycle_t *cycle)
     sigemptyset(&set);
 
 
+// 保存命令行参数
     size = sizeof(master_process);
 
     for (i = 0; i < ngx_argc; i++) {
@@ -125,11 +130,14 @@ ngx_master_process_cycle(ngx_cycle_t *cycle)
     ngx_setproctitle(title);
 
 
+// 获取配置文件信息
     ccf = (ngx_core_conf_t *) ngx_get_conf(cycle->conf_ctx, ngx_core_module);
 
     // fork子进程
+// 开启工作进程
     ngx_start_worker_processes(cycle, ccf->worker_processes,
                                NGX_PROCESS_RESPAWN);
+// 开启缓存管理进程
     ngx_start_cache_manager_processes(cycle, 0);
 
     ngx_new_binary = 0;
@@ -137,7 +145,9 @@ ngx_master_process_cycle(ngx_cycle_t *cycle)
     sigio = 0;
     live = 1;
 
+// 无限循环
     for ( ;; ) {
+        // 超时处理
         if (delay) {
             if (ngx_sigalrm) {
                 sigio = 0;
@@ -168,6 +178,7 @@ ngx_master_process_cycle(ngx_cycle_t *cycle)
         ngx_log_debug1(NGX_LOG_DEBUG_EVENT, cycle->log, 0,
                        "wake up, sigio %i", sigio);
 
+        // CHILD信号 有子进程意外结束，需要监控所有子进程的运行状态
         if (ngx_reap) {
             ngx_reap = 0;
             ngx_log_debug0(NGX_LOG_DEBUG_EVENT, cycle->log, 0, "reap children");
@@ -201,6 +212,7 @@ ngx_master_process_cycle(ngx_cycle_t *cycle)
             continue;
         }
 
+        // QUIT信号 关闭整个服务
         if (ngx_quit) {
             ngx_signal_worker_processes(cycle,
                                         ngx_signal_value(NGX_SHUTDOWN_SIGNAL));
@@ -335,6 +347,7 @@ ngx_single_process_cycle(ngx_cycle_t *cycle)
 }
 
 
+// 工作进程 worker process start
 static void
 ngx_start_worker_processes(ngx_cycle_t *cycle, ngx_int_t n, ngx_int_t type)
 {

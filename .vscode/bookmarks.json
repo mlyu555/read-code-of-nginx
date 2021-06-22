@@ -1,12 +1,22 @@
 {
 	"files": [
 		{
-			"path": "src/core/ngx_string.h",
+			"path": "src/core/ngx_cycle.h",
 			"bookmarks": [
 				{
-					"line": 15,
-					"column": 16,
-					"label": "ngx_str_t"
+					"line": 40,
+					"column": 20,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "src/core/ngx_connection.h",
+			"bookmarks": [
+				{
+					"line": 19,
+					"column": 24,
+					"label": ""
 				}
 			]
 		},
@@ -16,37 +26,7 @@
 				{
 					"line": 57,
 					"column": 19,
-					"label": "ngx_pool_t"
-				}
-			]
-		},
-		{
-			"path": "src/core/ngx_array.h",
-			"bookmarks": [
-				{
-					"line": 16,
-					"column": 16,
-					"label": "ngx_array_t"
-				}
-			]
-		},
-		{
-			"path": "src/core/ngx_hash.h",
-			"bookmarks": [
-				{
-					"line": 22,
-					"column": 6,
-					"label": "ngx_hash_t"
-				}
-			]
-		},
-		{
-			"path": "src/core/ngx_buf.h",
-			"bookmarks": [
-				{
-					"line": 60,
-					"column": 9,
-					"label": "ngx_chain_t"
+					"label": ""
 				}
 			]
 		}

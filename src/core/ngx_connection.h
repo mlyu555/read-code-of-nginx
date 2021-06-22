@@ -15,15 +15,17 @@
 
 typedef struct ngx_listening_s  ngx_listening_t;
 
+// 数据结构 ngx_listening_t
+// 标识一个监听端口
 struct ngx_listening_s {
     ngx_socket_t        fd;
 
     struct sockaddr    *sockaddr;
     socklen_t           socklen;    /* size of sockaddr */
-    size_t              addr_text_max_len;
-    ngx_str_t           addr_text;
+    size_t              addr_text_max_len;      // IP地址字符串最大长度, 指定addr_text最大长度
+    ngx_str_t           addr_text;              // IP地址字符串
 
-    int                 type;
+    int                 type;       // socket类型: SOCK_STREAM/
 
     int                 backlog;
     int                 rcvbuf;
@@ -35,19 +37,20 @@ struct ngx_listening_s {
 #endif
 
     /* handler of accepted connection */
-    ngx_connection_handler_pt   handler;
+    ngx_connection_handler_pt   handler;    // unused 当新TCP连接建立后的处理句柄
 
+    // 保留指针, 目前用于HTTP/MAIL等模块，用于保存当前监听端口对应的所有主机名
     void               *servers;  /* array of ngx_http_in_addr_t, for example */
 
     ngx_log_t           log;
     ngx_log_t          *logp;
 
-    size_t              pool_size;
+    size_t              pool_size;  // 新建TCP连接的内存池初始大小
     /* should be here because of the AcceptEx() preread */
     size_t              post_accept_buffer_size;
 
     ngx_listening_t    *previous;
-    ngx_connection_t   *connection;
+    ngx_connection_t   *connection;     // 对应的连接句柄
 
     ngx_rbtree_t        rbtree;
     ngx_rbtree_node_t   sentinel;
@@ -58,7 +61,7 @@ struct ngx_listening_s {
     unsigned            remain:1;
     unsigned            ignore:1;
 
-    unsigned            bound:1;       /* already bound */
+    unsigned            bound:1;       /* already bound */  // unused
     unsigned            inherited:1;   /* inherited from previous process */
     unsigned            nonblocking_accept:1;
     unsigned            listen:1;

@@ -1058,6 +1058,7 @@ failed:
 #endif
 
 
+// 解析请求行
 static void
 ngx_http_process_request_line(ngx_event_t *rev)
 {

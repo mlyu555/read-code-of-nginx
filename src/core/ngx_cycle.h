@@ -36,6 +36,8 @@ struct ngx_shm_zone_s {
 };
 
 
+// 核心结构 ngx_cycle_t
+// 每个进程都拥有唯一的ngx_cycle_t
 struct ngx_cycle_s {
     void                  ****conf_ctx;
     ngx_pool_t               *pool;
@@ -57,7 +59,7 @@ struct ngx_cycle_s {
     ngx_uint_t                reusable_connections_n;
     time_t                    connections_reuse_time;
 
-    ngx_array_t               listening;
+    ngx_array_t               listening;    // 数组成员 ngx_listening_t
     ngx_array_t               paths;
 
     ngx_array_t               config_dump;

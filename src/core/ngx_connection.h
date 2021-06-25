@@ -122,31 +122,32 @@ typedef enum {
 #define NGX_HTTP_V2_BUFFERED   0x02
 
 
+// 被动连接 ngx_connection_t
 struct ngx_connection_s {
-    void               *data;
-    ngx_event_t        *read;
-    ngx_event_t        *write;
+    void               *data;                   // 连接未使用时指向连接池空闲连接的next指针；连接使用时指向使用模块如ngx_http_request_t
+    ngx_event_t        *read;                   // 读事件
+    ngx_event_t        *write;                  // 写事件
 
-    ngx_socket_t        fd;
+    ngx_socket_t        fd;                     // socketfd
 
-    ngx_recv_pt         recv;
-    ngx_send_pt         send;
-    ngx_recv_chain_pt   recv_chain;
-    ngx_send_chain_pt   send_chain;
+    ngx_recv_pt         recv;                   // 接收字符流的处理方式（字符流）
+    ngx_send_pt         send;                   // 发送字符流的处理方式
+    ngx_recv_chain_pt   recv_chain;             // 以ngx_chain_t链表接收
+    ngx_send_chain_pt   send_chain;             // 以ngx_chain_t链表发送
 
-    ngx_listening_t    *listening;
+    ngx_listening_t    *listening;              // 监听对象
 
-    off_t               sent;
+    off_t               sent;                   // 已发送字节大小
 
     ngx_log_t          *log;
 
-    ngx_pool_t         *pool;
+    ngx_pool_t         *pool;                   // 内存池，大小取决于listening->pool_size
 
     int                 type;
 
-    struct sockaddr    *sockaddr;
+    struct sockaddr    *sockaddr;               // 远端地址
     socklen_t           socklen;
-    ngx_str_t           addr_text;
+    ngx_str_t           addr_text;              // 字符串形式的客户端IP地址
 
     ngx_proxy_protocol_t  *proxy_protocol;
 
@@ -156,28 +157,29 @@ struct ngx_connection_s {
 
     ngx_udp_connection_t  *udp;
 
-    struct sockaddr    *local_sockaddr;
+    struct sockaddr    *local_sockaddr;         // 本地地址
     socklen_t           local_socklen;
 
-    ngx_buf_t          *buffer;
+    ngx_buf_t          *buffer;                 // 接收/缓存客户端数据大小，配置项决定
 
-    ngx_queue_t         queue;
+    ngx_queue_t         queue;                  // 连接以双向链表添加到ngx_cycle_t->reuseable_connections_queue
 
-    ngx_atomic_uint_t   number;
+    ngx_atomic_uint_t   number;                 // 连接次数
 
     ngx_msec_t          start_time;
-    ngx_uint_t          requests;
+    ngx_uint_t          requests;               // 处理请求次数
 
-    unsigned            buffered:8;
+    // 位域 32bits   25/27
+    unsigned            buffered:8;             // 缓存业务类型
 
-    unsigned            log_error:3;     /* ngx_connection_log_error_e */
+    unsigned            log_error:3;     /* ngx_connection_log_error_e */   // 日志级别
 
-    unsigned            timedout:1;
-    unsigned            error:1;
-    unsigned            destroyed:1;
+    unsigned            timedout:1;             // 1_超时
+    unsigned            error:1;                // 1_出现错误
+    unsigned            destroyed:1;            // 1_TCP连接已销毁，ngx_connection_t结构还在但其socket/mempool等不可用
 
-    unsigned            idle:1;
-    unsigned            reusable:1;
+    unsigned            idle:1;                 // 1_空闲状态
+    unsigned            reusable:1;             // 1_连接可重用
     unsigned            close:1;
     unsigned            shared:1;
 

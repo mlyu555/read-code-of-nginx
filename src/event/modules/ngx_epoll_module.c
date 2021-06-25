@@ -130,8 +130,8 @@ static void ngx_epoll_eventfd_handler(ngx_event_t *ev);
 static void *ngx_epoll_create_conf(ngx_cycle_t *cycle);
 static char *ngx_epoll_init_conf(ngx_cycle_t *cycle, void *conf);
 
-static int                  ep = -1;
-static struct epoll_event  *event_list;
+static int                  ep = -1;            // epollfd
+static struct epoll_event  *event_list;         // epoll_wait参数
 static ngx_uint_t           nevents;
 
 #if (NGX_HAVE_EVENTFD)
@@ -156,16 +156,17 @@ ngx_uint_t                  ngx_use_epoll_rdhup;
 
 static ngx_str_t      epoll_name = ngx_string("epoll");
 
+// epoll配置项: epoll_events\worker_aio_requests
 static ngx_command_t  ngx_epoll_commands[] = {
 
-    { ngx_string("epoll_events"),
+    { ngx_string("epoll_events"),               // epoll_wait最大返回事件数
       NGX_EVENT_CONF|NGX_CONF_TAKE1,
-      ngx_conf_set_num_slot,
+      ngx_conf_set_num_slot,                    // 预分配解析
       0,
       offsetof(ngx_epoll_conf_t, events),
       NULL },
 
-    { ngx_string("worker_aio_requests"),
+    { ngx_string("worker_aio_requests"),        // 初始分配异步IO事件数（开启异步IO且使用io_setup）
       NGX_EVENT_CONF|NGX_CONF_TAKE1,
       ngx_conf_set_num_slot,
       0,
@@ -176,6 +177,7 @@ static ngx_command_t  ngx_epoll_commands[] = {
 };
 
 
+// 事件模块API的具体实现
 static ngx_event_module_t  ngx_epoll_module_ctx = {
     &epoll_name,
     ngx_epoll_create_conf,               /* create configuration */
@@ -199,6 +201,8 @@ static ngx_event_module_t  ngx_epoll_module_ctx = {
     }
 };
 
+
+// epoll模块
 ngx_module_t  ngx_epoll_module = {
     NGX_MODULE_V1,
     &ngx_epoll_module_ctx,               /* module context */
@@ -322,6 +326,7 @@ failed:
 static ngx_int_t
 ngx_epoll_init(ngx_cycle_t *cycle, ngx_msec_t timer)
 {
+    // 1. 根据具体模块从cycle->conf_ctx获取对应配置项
     ngx_epoll_conf_t  *epcf;
 
     epcf = ngx_event_get_conf(cycle->conf_ctx, ngx_epoll_module);
@@ -341,7 +346,7 @@ ngx_epoll_init(ngx_cycle_t *cycle, ngx_msec_t timer)
         }
 #endif
 
-#if (NGX_HAVE_FILE_AIO)
+#if (NGX_HAVE_FILE_AIO)                     // 异步IO
         ngx_epoll_aio_init(cycle, epcf);
 #endif
 
@@ -368,10 +373,10 @@ ngx_epoll_init(ngx_cycle_t *cycle, ngx_msec_t timer)
 
     ngx_event_actions = ngx_epoll_module_ctx.actions;
 
-#if (NGX_HAVE_CLEAR_EVENT)
-    ngx_event_flags = NGX_USE_CLEAR_EVENT
+#if (NGX_HAVE_CLEAR_EVENT)                          // epoll模式选择
+    ngx_event_flags = NGX_USE_CLEAR_EVENT           // ET
 #else
-    ngx_event_flags = NGX_USE_LEVEL_EVENT
+    ngx_event_flags = NGX_USE_LEVEL_EVENT           // LT
 #endif
                       |NGX_USE_GREEDY_EVENT
                       |NGX_USE_EPOLL_EVENT;
@@ -575,6 +580,7 @@ ngx_epoll_done(ngx_cycle_t *cycle)
 }
 
 
+// 添加事件
 static ngx_int_t
 ngx_epoll_add_event(ngx_event_t *ev, ngx_int_t event, ngx_uint_t flags)
 {

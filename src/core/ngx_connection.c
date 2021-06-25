@@ -1090,6 +1090,9 @@ ngx_close_listening_sockets(ngx_cycle_t *cycle)
 }
 
 
+// 从连接池中获取ngx_connection_t并获取相应的读写事件
+// s: sockfd(int)
+// log: 日志对象
 ngx_connection_t *
 ngx_get_connection(ngx_socket_t s, ngx_log_t *log)
 {
@@ -1156,6 +1159,7 @@ ngx_get_connection(ngx_socket_t s, ngx_log_t *log)
 }
 
 
+// 回收连接
 void
 ngx_free_connection(ngx_connection_t *c)
 {

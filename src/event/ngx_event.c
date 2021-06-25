@@ -78,6 +78,7 @@ ngx_atomic_t         *ngx_stat_waiting = &ngx_stat_waiting0;
 
 
 
+// 配置项
 static ngx_command_t  ngx_events_commands[] = {
 
     { ngx_string("events"),
@@ -91,6 +92,7 @@ static ngx_command_t  ngx_events_commands[] = {
 };
 
 
+// 核心模块
 static ngx_core_module_t  ngx_events_module_ctx = {
     ngx_string("events"),
     NULL,
@@ -98,6 +100,8 @@ static ngx_core_module_t  ngx_events_module_ctx = {
 };
 
 
+// nginx.conf中的events{}配置项相关——必不可少
+// 仅对events配置项解析
 ngx_module_t  ngx_events_module = {
     NGX_MODULE_V1,
     &ngx_events_module_ctx,                /* module context */
@@ -119,14 +123,14 @@ static ngx_str_t  event_core_name = ngx_string("event_core");
 
 static ngx_command_t  ngx_event_core_commands[] = {
 
-    { ngx_string("worker_connections"),
+    { ngx_string("worker_connections"),             // 连接池大小，即workerTCP最大连接数
       NGX_EVENT_CONF|NGX_CONF_TAKE1,
       ngx_event_connections,
       0,
       0,
       NULL },
 
-    { ngx_string("use"),
+    { ngx_string("use"),                            // 选择事件驱动机制
       NGX_EVENT_CONF|NGX_CONF_TAKE1,
       ngx_event_use,
       0,
@@ -140,7 +144,7 @@ static ngx_command_t  ngx_event_core_commands[] = {
       offsetof(ngx_event_conf_t, multi_accept),
       NULL },
 
-    { ngx_string("accept_mutex"),
+    { ngx_string("accept_mutex"),                   // 负载均衡锁，默认开启
       NGX_EVENT_CONF|NGX_CONF_FLAG,
       ngx_conf_set_flag_slot,
       0,
@@ -165,6 +169,7 @@ static ngx_command_t  ngx_event_core_commands[] = {
 };
 
 
+// 核心事件模型仅实现 create_conf\init_conf
 static ngx_event_module_t  ngx_event_core_module_ctx = {
     &event_core_name,
     ngx_event_core_create_conf,            /* create configuration */
@@ -174,14 +179,19 @@ static ngx_event_module_t  ngx_event_core_module_ctx = {
 };
 
 
+// 事件核心模块: 
+//      1. 选择事件驱动机制（IO多路复用类型epoll/select/kqueue等）
+//      2. 管理事件
+//      3. 创建连接池（以及读写事件）
+//      4. 初始化待使用事件模块
 ngx_module_t  ngx_event_core_module = {
     NGX_MODULE_V1,
     &ngx_event_core_module_ctx,            /* module context */
     ngx_event_core_commands,               /* module directives */
     NGX_EVENT_MODULE,                      /* module type */
     NULL,                                  /* init master */
-    ngx_event_module_init,                 /* init module */
-    ngx_event_process_init,                /* init process */
+    ngx_event_module_init,                 /* init module */        // fork工作进程前，调用
+    ngx_event_process_init,                /* init process */       // fork工作进程后，每个worker调用后进入循环
     NULL,                                  /* init thread */
     NULL,                                  /* exit thread */
     NULL,                                  /* exit process */
@@ -263,13 +273,17 @@ ngx_process_events_and_timers(ngx_cycle_t *cycle)
 }
 
 
+// rev: 事件
+// flags: 事件驱动方式，epoll不用
 ngx_int_t
 ngx_handle_read_event(ngx_event_t *rev, ngx_uint_t flags)
 {
+    // ngx_event_flags: 驱动不同平台
     if (ngx_event_flags & NGX_USE_CLEAR_EVENT) {
 
         /* kqueue, epoll */
 
+        // 添加事件
         if (!rev->active && !rev->ready) {
             if (ngx_add_event(rev, NGX_READ_EVENT, NGX_CLEAR_EVENT)
                 == NGX_ERROR)
@@ -331,6 +345,8 @@ ngx_handle_read_event(ngx_event_t *rev, ngx_uint_t flags)
 }
 
 
+// wev: 事件
+// lowat: 
 ngx_int_t
 ngx_handle_write_event(ngx_event_t *wev, size_t lowat)
 {

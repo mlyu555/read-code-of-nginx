@@ -74,6 +74,7 @@
 #define NGX_MAX_CONF_ERRSTR  1024
 
 
+// ngx_command_t
 struct ngx_command_s {
     ngx_str_t             name;
     ngx_uint_t            type;

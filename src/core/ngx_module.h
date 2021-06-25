@@ -221,6 +221,7 @@
 
 // 模块接口规范 ngx_module_t
 struct ngx_module_s {
+    // NGX_MODULE_V1
     ngx_uint_t            ctx_index;
     ngx_uint_t            index;
 
@@ -232,8 +233,8 @@ struct ngx_module_s {
     ngx_uint_t            version;
     const char           *signature;
 
-    void                 *ctx;
-    ngx_command_t        *commands;
+    void                 *ctx;                                      // 指向ngx_event_module_t
+    ngx_command_t        *commands;                                 // 指向配置项数组
     ngx_uint_t            type;
 
     ngx_int_t           (*init_master)(ngx_log_t *log);             // unused
@@ -258,6 +259,7 @@ struct ngx_module_s {
 };
 
 
+// 核心模块ngx_core_module_t
 typedef struct {
     ngx_str_t             name;
     void               *(*create_conf)(ngx_cycle_t *cycle);

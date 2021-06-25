@@ -6,7 +6,7 @@
 				{
 					"line": 40,
 					"column": 20,
-					"label": ""
+					"label": "ngx_cycle_t"
 				}
 			]
 		},
@@ -16,6 +16,11 @@
 				{
 					"line": 19,
 					"column": 24,
+					"label": "ngx_listening_t"
+				},
+				{
+					"line": 125,
+					"column": 25,
 					"label": ""
 				}
 			]
@@ -26,6 +31,26 @@
 				{
 					"line": 57,
 					"column": 19,
+					"label": "ngx_pool_t"
+				}
+			]
+		},
+		{
+			"path": "src/core/ngx_conf_file.h",
+			"bookmarks": [
+				{
+					"line": 77,
+					"column": 22,
+					"label": "ngx_command_t"
+				}
+			]
+		},
+		{
+			"path": "src/event/ngx_event.h",
+			"bookmarks": [
+				{
+					"line": 30,
+					"column": 20,
 					"label": ""
 				}
 			]

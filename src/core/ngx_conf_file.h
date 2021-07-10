@@ -19,6 +19,7 @@
  *    TT        command type, i.e. HTTP "location" or "server" command
  */
 
+// 配置指令参数个数 ngx_command_t.type          4bytes
 #define NGX_CONF_NOARGS      0x00000001
 #define NGX_CONF_TAKE1       0x00000002
 #define NGX_CONF_TAKE2       0x00000004
@@ -28,7 +29,7 @@
 #define NGX_CONF_TAKE6       0x00000040
 #define NGX_CONF_TAKE7       0x00000080
 
-#define NGX_CONF_MAX_ARGS    8
+#define NGX_CONF_MAX_ARGS    8              // 最大8个参数
 
 #define NGX_CONF_TAKE12      (NGX_CONF_TAKE1|NGX_CONF_TAKE2)
 #define NGX_CONF_TAKE13      (NGX_CONF_TAKE1|NGX_CONF_TAKE3)
@@ -46,10 +47,10 @@
 #define NGX_CONF_1MORE       0x00000800
 #define NGX_CONF_2MORE       0x00001000
 
-#define NGX_DIRECT_CONF      0x00010000
+#define NGX_DIRECT_CONF      0x00010000         // 配置文件中最外层
 
-#define NGX_MAIN_CONF        0x01000000
-#define NGX_ANY_CONF         0xFF000000
+#define NGX_MAIN_CONF        0x01000000         // http、mail、events、error_log等。
+#define NGX_ANY_CONF         0xFF000000         // 可以出现在任意配置级别上
 
 
 
@@ -76,12 +77,12 @@
 
 // ngx_command_t
 struct ngx_command_s {
-    ngx_str_t             name;
-    ngx_uint_t            type;
-    char               *(*set)(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
-    ngx_uint_t            conf;
-    ngx_uint_t            offset;
-    void                 *post;
+    ngx_str_t             name;                 // 指令名称
+    ngx_uint_t            type;                 // 属性集合 NGX_CONF_TAKE*
+    char               *(*set)(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);     // 解析
+    ngx_uint_t            conf;                 // 指定内存池: main/server/location
+    ngx_uint_t            offset;               // 指定为字段偏移量，可得到精准存放位置
+    void                 *post;                 // 临时指针
 };
 
 #define ngx_null_command  { ngx_null_string, 0, NULL, 0, 0, NULL }
@@ -278,6 +279,9 @@ void ngx_cdecl ngx_conf_log_error(ngx_uint_t level, ngx_conf_t *cf,
     ngx_err_t err, const char *fmt, ...);
 
 
+// ngx_command_t.set
+
+// 读取ngx_conf_flag类型的参数 on/off
 char *ngx_conf_set_flag_slot(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 char *ngx_conf_set_str_slot(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 char *ngx_conf_set_str_array_slot(ngx_conf_t *cf, ngx_command_t *cmd,

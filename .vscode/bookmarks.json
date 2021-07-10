@@ -39,9 +39,14 @@
 			"path": "src/core/ngx_conf_file.h",
 			"bookmarks": [
 				{
-					"line": 77,
+					"line": 78,
 					"column": 22,
 					"label": "ngx_command_t"
+				},
+				{
+					"line": 117,
+					"column": 19,
+					"label": ""
 				}
 			]
 		},
@@ -51,6 +56,46 @@
 				{
 					"line": 30,
 					"column": 20,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "src/core/ngx_queue.h",
+			"bookmarks": [
+				{
+					"line": 18,
+					"column": 20,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "src/core/ngx_list.h",
+			"bookmarks": [
+				{
+					"line": 26,
+					"column": 16,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "src/core/nginx.c",
+			"bookmarks": [
+				{
+					"line": 196,
+					"column": 33,
+					"label": "main"
+				}
+			]
+		},
+		{
+			"path": "src/core/ngx_cycle.c",
+			"bookmarks": [
+				{
+					"line": 38,
+					"column": 38,
 					"label": ""
 				}
 			]

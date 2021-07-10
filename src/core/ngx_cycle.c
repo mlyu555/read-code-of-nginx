@@ -34,7 +34,7 @@ ngx_uint_t             ngx_quiet_mode;
 static ngx_connection_t  dumb;
 /* STUB */
 
-
+// 加载配置文件
 ngx_cycle_t *
 ngx_init_cycle(ngx_cycle_t *old_cycle)
 {
@@ -194,7 +194,7 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
 
     ngx_queue_init(&cycle->reusable_connections_queue);
 
-
+    // conf_ctx 数组指针: 分配ngx_max_module个指针空间即分配数组本身内存空间
     cycle->conf_ctx = ngx_pcalloc(pool, ngx_max_module * sizeof(void *));
     if (cycle->conf_ctx == NULL) {
         ngx_destroy_pool(pool);
@@ -228,6 +228,7 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
     }
 
 
+    // 每个模块调用各自create_conf, 为cycle->conf_ctx[]中的元素分配内存空间
     for (i = 0; cycle->modules[i]; i++) {
         if (cycle->modules[i]->type != NGX_CORE_MODULE) {
             continue;
@@ -236,7 +237,7 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
         module = cycle->modules[i]->ctx;
 
         if (module->create_conf) {
-            rv = module->create_conf(cycle);
+            rv = module->create_conf(cycle);    // 参考 ngx_core_module_create_conf
             if (rv == NULL) {
                 ngx_destroy_pool(pool);
                 return NULL;
@@ -264,6 +265,7 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
     }
 
 
+    // 创建临时ngx_conf_t conf，保存cycle/pool/conf_ctx等
     conf.ctx = cycle->conf_ctx;
     conf.cycle = cycle;
     conf.pool = pool;

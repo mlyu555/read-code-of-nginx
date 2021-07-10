@@ -72,7 +72,9 @@
 #endif
 
 // 均在函数可变参数中使用，如main、fmt、printf、string等
-#define ngx_cdecl       
+// 预留字段 跨平台
+#define ngx_cdecl
+// #define ngx_cdecl stdcall        // 调整函数调用方式
 #define ngx_libc_cdecl
 
 #endif

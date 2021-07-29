@@ -1,0 +1,3 @@
+./configure --add-module=ext/mytest/
+
+make && make install

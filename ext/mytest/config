@@ -1,0 +1,8 @@
+# 仅在configure执行时使用，一般设置为模块名称
+ngx_addon_name="ngx_http_mytest_module"
+
+# 保存所有的HTTP模块名称，每个HTTP模块间由空格符相连，在重新设置HTTP_MODULES变量时，不要直接覆盖他，应该使用空格追加模块
+HTTP_MODULES="$HTTP_MODULES ngx_http_mytest_module"
+
+# 指定扩展模块的源代码
+NGX_ADDON_SRCS="$NGX_ADDON_SRCS $ngx_addon_dir/ngx_http_mytest_module.c"

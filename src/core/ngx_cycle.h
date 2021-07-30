@@ -39,7 +39,7 @@ struct ngx_shm_zone_s {
 // 核心结构 ngx_cycle_t
 // 每个进程都拥有唯一的ngx_cycle_t
 struct ngx_cycle_s {
-    void                  ****conf_ctx;
+    void                  ****conf_ctx;             // 指向整个配置结构
     ngx_pool_t               *pool;
 
     ngx_log_t                *log;

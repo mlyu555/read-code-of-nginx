@@ -169,7 +169,7 @@ ngx_conf_parse(ngx_conf_t *cf, ngx_str_t *filename)
         parse_param
     } type;
 
-#if (NGX_SUPPRESS_WARN)
+#if (NGX_SUPPRESS_WARN)         // DOUT:
     fd = NGX_INVALID_FILE;
     prev = NULL;
 #endif
@@ -353,6 +353,7 @@ done:
 }
 
 
+// 遍历所有模块，匹配配置项
 static ngx_int_t
 ngx_conf_handler(ngx_conf_t *cf, ngx_int_t last)
 {
@@ -447,12 +448,15 @@ ngx_conf_handler(ngx_conf_t *cf, ngx_int_t last)
 
             conf = NULL;
 
+            // ngx_core_module模块配置ngx_core_conf_t指针
             if (cmd->type & NGX_DIRECT_CONF) {
                 conf = ((void **) cf->ctx)[cf->cycle->modules[i]->index];
 
+            // 解析http{}: 还未内存分配，仅取地址
             } else if (cmd->type & NGX_MAIN_CONF) {
                 conf = &(((void **) cf->ctx)[cf->cycle->modules[i]->index]);
 
+            // 解析
             } else if (cf->ctx) {
                 confp = *(void **) ((char *) cf->ctx + cmd->conf);
 
@@ -461,7 +465,7 @@ ngx_conf_handler(ngx_conf_t *cf, ngx_int_t last)
                 }
             }
 
-            rv = cmd->set(cf, cmd, conf);
+            rv = cmd->set(cf, cmd, conf);       // ngx_http_block
 
             if (rv == NGX_CONF_OK) {
                 return NGX_OK;
@@ -1034,7 +1038,7 @@ ngx_conf_set_flag_slot(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
     fp = (ngx_flag_t *) (p + cmd->offset);
 
-    if (*fp != NGX_CONF_UNSET) {
+    if (*fp != NGX_CONF_UNSET) {        // DOUT: 为什么不能进行参数覆盖
         return "is duplicate";
     }
 

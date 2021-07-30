@@ -75,13 +75,13 @@
 #define NGX_MAX_CONF_ERRSTR  1024
 
 
-// ngx_command_t
+// ngx_command_t 配置项
 struct ngx_command_s {
-    ngx_str_t             name;                 // 指令名称
-    ngx_uint_t            type;                 // 属性集合 NGX_CONF_TAKE*
-    char               *(*set)(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);     // 解析
-    ngx_uint_t            conf;                 // 指定内存池: main/server/location
-    ngx_uint_t            offset;               // 指定为字段偏移量，可得到精准存放位置
+    ngx_str_t             name;                 // 配置项名称
+    ngx_uint_t            type;                 // 属性集合
+    char               *(*set)(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);     // 解析配置项参数
+    ngx_uint_t            conf;                 // 所在内存的相对偏移位置，HTTP模块必须 指定存放结构体  // TODO: 疑问
+    ngx_uint_t            offset;               // 在整个配置项中的偏移量，单位：字节  offsetof
     void                 *post;                 // 临时指针
 };
 
@@ -204,6 +204,7 @@ char *ngx_conf_check_num_bounds(ngx_conf_t *cf, void *post, void *data);
         conf = default;                                                      \
     }
 
+// 配置项合并 预设10个
 #define ngx_conf_merge_value(conf, prev, default)                            \
     if (conf == NGX_CONF_UNSET) {                                            \
         conf = (prev == NGX_CONF_UNSET) ? default : prev;                    \
@@ -279,9 +280,7 @@ void ngx_cdecl ngx_conf_log_error(ngx_uint_t level, ngx_conf_t *cf,
     ngx_err_t err, const char *fmt, ...);
 
 
-// ngx_command_t.set
-
-// 读取ngx_conf_flag类型的参数 on/off
+// 预设14种配置项解析 ngx_command_t.set
 char *ngx_conf_set_flag_slot(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 char *ngx_conf_set_str_slot(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 char *ngx_conf_set_str_array_slot(ngx_conf_t *cf, ngx_command_t *cmd,
@@ -295,6 +294,8 @@ char *ngx_conf_set_sec_slot(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 char *ngx_conf_set_bufs_slot(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 char *ngx_conf_set_enum_slot(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 char *ngx_conf_set_bitmask_slot(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
+// char *ngx_conf_set_path_slot(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);        // ngx_file.h
+// char *ngx_conf_set_access_slot(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);      // ngx_file.h
 
 
 #endif /* _NGX_CONF_FILE_H_INCLUDED_ */

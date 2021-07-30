@@ -41,7 +41,7 @@ ngx_module_t ngx_http_mytest_module = {
     NULL,
     NGX_MODULE_V1_PADDING};
 
-// 处理nginx.conf配置项参数
+// 解析配置项参数 预设14种 ngx_conf_set_*_slot
 static char *ngx_http_mytest(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 {
     ngx_http_core_loc_conf_t *clcf;

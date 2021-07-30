@@ -194,7 +194,9 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
 
     ngx_queue_init(&cycle->reusable_connections_queue);
 
+    // STEP: config malloc
     // conf_ctx 数组指针: 分配ngx_max_module个指针空间即分配数组本身内存空间
+    // 每个模块的conf分开存储
     cycle->conf_ctx = ngx_pcalloc(pool, ngx_max_module * sizeof(void *));
     if (cycle->conf_ctx == NULL) {
         ngx_destroy_pool(pool);
@@ -228,7 +230,9 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
     }
 
 
+    // STEP: config malloc
     // 每个模块调用各自create_conf, 为cycle->conf_ctx[]中的元素分配内存空间
+    // 仅遍历核心模块
     for (i = 0; cycle->modules[i]; i++) {
         if (cycle->modules[i]->type != NGX_CORE_MODULE) {
             continue;
@@ -236,6 +240,7 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
 
         module = cycle->modules[i]->ctx;
 
+        // create_conf: 仅继续分配内存空间，默认初始化（未赋实际值）
         if (module->create_conf) {
             rv = module->create_conf(cycle);    // 参考 ngx_core_module_create_conf
             if (rv == NULL) {
@@ -265,6 +270,7 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
     }
 
 
+    // STEP: config parse 准备
     // 创建临时ngx_conf_t conf，保存cycle/pool/conf_ctx等
     conf.ctx = cycle->conf_ctx;
     conf.cycle = cycle;
@@ -283,6 +289,7 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
         return NULL;
     }
 
+    // 配置文件解析
     if (ngx_conf_parse(&conf, &cycle->conf_file) != NGX_CONF_OK) {
         environ = senv;
         ngx_destroy_cycle_pools(&conf);

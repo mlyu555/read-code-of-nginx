@@ -14,13 +14,17 @@
 #include <ngx_http.h>
 
 
+// 存放http{}配置项
 typedef struct {
-    void        **main_conf;
-    void        **srv_conf;
-    void        **loc_conf;
+    void        **main_conf;    // 数组指针，数组元素为create_main_conf产生的结构体
+    void        **srv_conf;     // create_srv_conf
+    void        **loc_conf;     // create_loc_conf
 } ngx_http_conf_ctx_t;
 
 
+// 与ngx_module_t是完全不一样的东西，我还以为是继承关系！
+// 目的: 处理http{}配置文件
+// 每个HTTP模块必须实现, 变量命名为: ngx_http_module_xxx_ctx
 typedef struct {
     ngx_int_t   (*preconfiguration)(ngx_conf_t *cf);
     ngx_int_t   (*postconfiguration)(ngx_conf_t *cf);
@@ -65,6 +69,8 @@ typedef struct {
 #define ngx_http_conf_get_module_loc_conf(cf, module)                         \
     ((ngx_http_conf_ctx_t *) cf->ctx)->loc_conf[module.ctx_index]
 
+// step: config
+// 获取某个模块的main_conf配置(整个HTTP框架仅一份)
 #define ngx_http_cycle_get_module_main_conf(cycle, module)                    \
     (cycle->conf_ctx[ngx_http_module.index] ?                                 \
         ((ngx_http_conf_ctx_t *) cycle->conf_ctx[ngx_http_module.index])      \

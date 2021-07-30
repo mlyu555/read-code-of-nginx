@@ -99,6 +99,26 @@
 					"label": ""
 				}
 			]
+		},
+		{
+			"path": "src/http/ngx_http_config.h",
+			"bookmarks": [
+				{
+					"line": 39,
+					"column": 20,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "src/core/ngx_module.h",
+			"bookmarks": [
+				{
+					"line": 222,
+					"column": 21,
+					"label": ""
+				}
+			]
 		}
 	]
 }

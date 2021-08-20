@@ -29,6 +29,7 @@ static ngx_command_t  ngx_conf_commands[] = {
 };
 
 
+// NGX_CONF_MODULE类型: 唯一
 ngx_module_t  ngx_conf_module = {
     NGX_MODULE_V1,
     NULL,                                  /* module context */

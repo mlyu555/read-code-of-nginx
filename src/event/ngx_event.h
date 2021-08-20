@@ -31,7 +31,7 @@ typedef struct {
 struct ngx_event_s {
     void            *data;          // 事件对象: 指向ngx_connection_t;ngx_event_aio_t（开启文件异步IO）
 
-    // 位域 sizeof(unsigned int) = 4/8bytes = 32/64bits? 
+    // 位域 sizeof(unsigned int) = 4/8bytes = 32/64bits?
     // 以下共用到20/21位
     unsigned         write:1;       // 标志位 1——可写，即可发送
 
@@ -181,7 +181,7 @@ typedef struct {
     ngx_int_t  (*add_conn)(ngx_connection_t *c);                                // 添加连接事件
     ngx_int_t  (*del_conn)(ngx_connection_t *c, ngx_uint_t flags);              // 移除连接事件
 
-    ngx_int_t  (*notify)(ngx_event_handler_pt handler);                         // 
+    ngx_int_t  (*notify)(ngx_event_handler_pt handler);                         //
 
     ngx_int_t  (*process_events)(ngx_cycle_t *cycle, ngx_msec_t timer,
                                  ngx_uint_t flags);                             // 事件处理（如处理连接事件、读事件、写事件、定时事件）
@@ -453,7 +453,7 @@ typedef struct {
 } ngx_event_conf_t;
 
 
-// 事件模块ngx_event_module_t
+// 事件模块 ngx_event_module_t
 typedef struct {
     ngx_str_t              *name;                                           // 名称
 
@@ -504,6 +504,7 @@ extern ngx_module_t           ngx_event_core_module;
 
 
 
+// 监听连接事件
 void ngx_event_accept(ngx_event_t *ev);
 #if !(NGX_WIN32)
 void ngx_event_recvmsg(ngx_event_t *ev);
@@ -511,6 +512,7 @@ void ngx_udp_rbtree_insert_value(ngx_rbtree_node_t *temp,
     ngx_rbtree_node_t *node, ngx_rbtree_node_t *sentinel);
 #endif
 void ngx_delete_udp_connection(void *data);
+// 解决惊群问题：同一时刻仅只有一个进程监听端口
 ngx_int_t ngx_trylock_accept_mutex(ngx_cycle_t *cycle);
 ngx_int_t ngx_enable_accept_events(ngx_cycle_t *cycle);
 u_char *ngx_accept_log_error(ngx_log_t *log, u_char *buf, size_t len);

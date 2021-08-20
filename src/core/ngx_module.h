@@ -219,7 +219,7 @@
 #define NGX_MODULE_V1_PADDING  0, 0, 0, 0, 0, 0, 0, 0
 
 
-// 模块接口规范 ngx_module_t
+// 模块接口设计规范 ngx_module_t
 struct ngx_module_s {
     // NGX_MODULE_V1
     ngx_uint_t            ctx_index;
@@ -233,9 +233,9 @@ struct ngx_module_s {
     ngx_uint_t            version;
     const char           *signature;
 
-    void                 *ctx;                                      // 指向ngx_event_module_t
+    void                 *ctx;                                      // 指向特定类型模块的通用接口
     ngx_command_t        *commands;                                 // 指向配置项数组
-    ngx_uint_t            type;
+    ngx_uint_t            type;                                     // 类型：NGX_CONF_MODULE
 
     ngx_int_t           (*init_master)(ngx_log_t *log);             // unused
 
@@ -259,7 +259,7 @@ struct ngx_module_s {
 };
 
 
-// 核心模块ngx_core_module_t
+// 核心模块接口 ngx_module_t.ctx
 typedef struct {
     ngx_str_t             name;
     void               *(*create_conf)(ngx_cycle_t *cycle);

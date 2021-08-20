@@ -39,12 +39,12 @@
 			"path": "src/core/ngx_conf_file.h",
 			"bookmarks": [
 				{
-					"line": 78,
+					"line": 79,
 					"column": 22,
 					"label": "ngx_command_t"
 				},
 				{
-					"line": 117,
+					"line": 118,
 					"column": 19,
 					"label": ""
 				}

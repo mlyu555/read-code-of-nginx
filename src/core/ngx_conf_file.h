@@ -68,6 +68,7 @@
 #define NGX_CONF_BLOCK_DONE  2
 #define NGX_CONF_FILE_DONE   3
 
+// 模块类型 ngx_module_t.type
 #define NGX_CORE_MODULE      0x45524F43  /* "CORE" */
 #define NGX_CONF_MODULE      0x464E4F43  /* "CONF" */
 

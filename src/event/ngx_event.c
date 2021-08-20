@@ -49,11 +49,13 @@ ngx_atomic_t         *ngx_connection_counter = &connection_counter;
 
 
 ngx_atomic_t         *ngx_accept_mutex_ptr;
+// 同步锁：解决惊群问题、负载均衡
 ngx_shmtx_t           ngx_accept_mutex;
 ngx_uint_t            ngx_use_accept_mutex;
 ngx_uint_t            ngx_accept_events;
 ngx_uint_t            ngx_accept_mutex_held;
 ngx_msec_t            ngx_accept_mutex_delay;
+// 负载均衡的关键阈yu值
 ngx_int_t             ngx_accept_disabled;
 
 
@@ -179,7 +181,7 @@ static ngx_event_module_t  ngx_event_core_module_ctx = {
 };
 
 
-// 事件核心模块: 
+// 事件核心模块:
 //      1. 选择事件驱动机制（IO多路复用类型epoll/select/kqueue等）
 //      2. 管理事件
 //      3. 创建连接池（以及读写事件）
@@ -346,7 +348,7 @@ ngx_handle_read_event(ngx_event_t *rev, ngx_uint_t flags)
 
 
 // wev: 事件
-// lowat: 
+// lowat:
 ngx_int_t
 ngx_handle_write_event(ngx_event_t *wev, size_t lowat)
 {

@@ -13,7 +13,9 @@
 #include <ngx_core.h>
 
 
+// 封装 malloc, 添加日志
 void *ngx_alloc(size_t size, ngx_log_t *log);
+// 封装 ngx_calloc, 并初始化为0
 void *ngx_calloc(size_t size, ngx_log_t *log);
 
 #define ngx_free          free

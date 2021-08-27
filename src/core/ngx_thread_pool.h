@@ -14,12 +14,13 @@
 #include <ngx_event.h>
 
 
+// 线程池任务队列
 struct ngx_thread_task_s {
-    ngx_thread_task_t   *next;
-    ngx_uint_t           id;
-    void                *ctx;
-    void               (*handler)(void *data, ngx_log_t *log);
-    ngx_event_t          event;
+    ngx_thread_task_t   *next;                  // 链表next
+    ngx_uint_t           id;                    // 任务id
+    void                *ctx;                   // 上下文（任务数据、设置等）
+    void               (*handler)(void *data, ngx_log_t *log);  // 回调函数
+    ngx_event_t          event;                 // 关联事件
 };
 
 

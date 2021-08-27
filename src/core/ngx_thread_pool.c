@@ -11,21 +11,24 @@
 #include <ngx_thread_pool.h>
 
 
+// 配置信息
 typedef struct {
     ngx_array_t               pools;
 } ngx_thread_pool_conf_t;
 
 
+// 任务队列头节点
 typedef struct {
     ngx_thread_task_t        *first;
-    ngx_thread_task_t       **last;
+    ngx_thread_task_t       **last;         // ??? 为什么要用二维指针?
 } ngx_thread_pool_queue_t;
 
 #define ngx_thread_pool_queue_init(q)                                         \
     (q)->first = NULL;                                                        \
-    (q)->last = &(q)->first
+    (q)->last = &(q)->first     // ??? -> 比 & 优先级高？
 
 
+// 线程池
 struct ngx_thread_pool_s {
     ngx_thread_mutex_t        mtx;
     ngx_thread_pool_queue_t   queue;
@@ -43,9 +46,14 @@ struct ngx_thread_pool_s {
 };
 
 
+// ??? 为什么要用static函数？
+
+// 初始化线程池
 static ngx_int_t ngx_thread_pool_init(ngx_thread_pool_t *tp, ngx_log_t *log,
     ngx_pool_t *pool);
+// 销毁线程池
 static void ngx_thread_pool_destroy(ngx_thread_pool_t *tp);
+// callback 从线程池中移除任务
 static void ngx_thread_pool_exit_handler(void *data, ngx_log_t *log);
 
 static void *ngx_thread_pool_cycle(void *data);

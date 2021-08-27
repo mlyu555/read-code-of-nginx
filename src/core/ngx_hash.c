@@ -257,6 +257,7 @@ ngx_hash_init(ngx_hash_init_t *hinit, ngx_hash_key_t *names, ngx_uint_t nelts)
     ngx_uint_t       i, n, key, size, start, bucket_size;
     ngx_hash_elt_t  *elt, **buckets;
 
+    // max_size不能为0
     if (hinit->max_size == 0) {
         ngx_log_error(NGX_LOG_EMERG, hinit->pool->log, 0,
                       "could not build %s, you should "
@@ -265,6 +266,7 @@ ngx_hash_init(ngx_hash_init_t *hinit, ngx_hash_key_t *names, ngx_uint_t nelts)
         return NGX_ERROR;
     }
 
+    // ???
     if (hinit->bucket_size > 65536 - ngx_cacheline_size) {
         ngx_log_error(NGX_LOG_EMERG, hinit->pool->log, 0,
                       "could not build %s, too large "
@@ -273,6 +275,7 @@ ngx_hash_init(ngx_hash_init_t *hinit, ngx_hash_key_t *names, ngx_uint_t nelts)
         return NGX_ERROR;
     }
 
+    // 检查每个元素是否超出bucket_size限制
     for (n = 0; n < nelts; n++) {
         if (hinit->bucket_size < NGX_HASH_ELT_SIZE(&names[n]) + sizeof(void *))
         {
@@ -284,13 +287,16 @@ ngx_hash_init(ngx_hash_init_t *hinit, ngx_hash_key_t *names, ngx_uint_t nelts)
         }
     }
 
+    // ???
     test = ngx_alloc(hinit->max_size * sizeof(u_short), hinit->pool->log);
     if (test == NULL) {
         return NGX_ERROR;
     }
 
-    bucket_size = hinit->bucket_size - sizeof(void *);
+    // 实际可用大小
+    bucket_size = hinit->bucket_size - sizeof(void *);      // 去除尾部NULL指针
 
+    // 
     start = nelts / (bucket_size / (2 * sizeof(void *)));
     start = start ? start : 1;
 

@@ -13,15 +13,17 @@
 #include <ngx_core.h>
 
 
+// hash value
 typedef struct {
     void             *value;        // 指向hash元素数据
-    u_short           len;
-    u_char            name[1];
+    u_short           len;          // 字节数
+    u_char            name[1];      // 按需申请
 } ngx_hash_elt_t;
 
 
+// hash bucket
 typedef struct {
-    ngx_hash_elt_t  **buckets;      // 桶元素
+    ngx_hash_elt_t  **buckets;      // 桶元素 数组指针
     ngx_uint_t        size;         // 元素个数
 } ngx_hash_t;
 
@@ -32,13 +34,14 @@ typedef struct {
 } ngx_hash_wildcard_t;      // 处理带有通配符的域名的匹配问题
 
 
+// hash key
 typedef struct {
-    ngx_str_t         key;
-    ngx_uint_t        key_hash;
+    ngx_str_t         key;          // 关键字字符串
+    ngx_uint_t        key_hash;     // hash值
     void             *value;
 } ngx_hash_key_t;
 
-
+/// 散列函数指针
 typedef ngx_uint_t (*ngx_hash_key_pt) (u_char *data, size_t len);
 
 
@@ -49,17 +52,18 @@ typedef struct {
 } ngx_hash_combined_t;      // 组合类型hash表
 
 
+// hashtable结构
 typedef struct {
     ngx_hash_t       *hash;
-    ngx_hash_key_pt   key;
+    ngx_hash_key_pt   key;                  // hash函数
 
-    ngx_uint_t        max_size;
-    ngx_uint_t        bucket_size;
+    ngx_uint_t        max_size;             // 最大元素个数
+    ngx_uint_t        bucket_size;          // 桶元素个数
 
-    char             *name;
-    ngx_pool_t       *pool;
-    ngx_pool_t       *temp_pool;
-} ngx_hash_init_t;          // 初始化hash的基本信息
+    char             *name;                 // hashtable名称
+    ngx_pool_t       *pool;                 // 内存池
+    ngx_pool_t       *temp_pool;            // 临时内存池
+} ngx_hash_init_t;
 
 
 #define NGX_HASH_SMALL            1
@@ -103,7 +107,9 @@ void *ngx_hash_find_wc_tail(ngx_hash_wildcard_t *hwc, u_char *name, size_t len);
 void *ngx_hash_find_combined(ngx_hash_combined_t *hash, ngx_uint_t key,
     u_char *name, size_t len);
 
-// API 初始化
+// --- API ---
+
+// 初始化
 ngx_int_t ngx_hash_init(ngx_hash_init_t *hinit, ngx_hash_key_t *names,
     ngx_uint_t nelts);
 ngx_int_t ngx_hash_wildcard_init(ngx_hash_init_t *hinit, ngx_hash_key_t *names,

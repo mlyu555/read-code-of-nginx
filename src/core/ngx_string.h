@@ -16,7 +16,9 @@
 typedef struct {
     size_t      len;    // 用len来表示字符串长度, 而不是'\0'
     u_char     *data;   // 指向第一个字符
-} ngx_str_t;    
+} ngx_str_t;
+
+int s = sizeof(ngx_str_t);
 
 
 typedef struct {
@@ -34,7 +36,7 @@ typedef struct {
     unsigned    escape:1;
 
     u_char     *data;
-} ngx_variable_value_t; 
+} ngx_variable_value_t;
 
 // api基本都是宏包裹的glibc的api
 // 使用时有很多小问题
